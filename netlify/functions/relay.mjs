@@ -9,7 +9,7 @@ export default async (req) => {
   const url = new URL(req.url);
   if (url.searchParams.get("key") !== KEY) return new Response("bad key", { status: 403 });
 
-  const store = getStore("qa");
+  const store = getStore({ name: "qa", consistency: "strong" });
   let slot = (await store.get("slot", { type: "json" })) || { q: "", a: "", t: 0 };
   if (slot.t && Date.now() - slot.t > TTL) slot = { q: "", a: "", t: 0 };
 
