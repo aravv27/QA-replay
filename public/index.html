@@ -1,0 +1,25 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Question</title>
+<body style="font-family:sans-serif;max-width:700px;margin:2em auto;padding:0 1em">
+<h3>Question</h3>
+<pre id="q" style="white-space:pre-wrap;background:#eee;padding:1em">loading...</pre>
+<h3>Your answer (paste code)</h3>
+<textarea id="a" rows="16" style="width:100%;font-family:monospace"></textarea><br>
+<button id="send" style="margin-top:.5em;padding:.5em 1.5em">Send</button>
+<span id="msg"></span>
+<script>
+const key = new URLSearchParams(location.search).get("key");
+async function load() {
+  const r = await fetch("/question?key=" + key);
+  const t = await r.text();
+  document.getElementById("q").textContent = r.ok ? (t || "(no question yet - this page refreshes itself)") : "bad key";
+}
+load();
+setInterval(load, 30000);
+document.getElementById("send").onclick = async () => {
+  const r = await fetch("/reply?key=" + key, { method: "POST", body: document.getElementById("a").value });
+  document.getElementById("msg").textContent = " " + await r.text();
+};
+</script>
+</body>
